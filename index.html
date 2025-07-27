@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Kontrol LED ESP32 via MQTT</title>
+  <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+  <style>
+    body { font-family: Arial; text-align: center; margin-top: 60px; }
+    h1 { color: #333; }
+    button {
+      font-size: 18px;
+      padding: 10px 30px;
+      margin: 10px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .on { background-color: green; color: white; }
+    .off { background-color: red; color: white; }
+  </style>
+</head>
+<body>
+  <h1>Kontrol LED ESP32</h1>
+  <button class="on" onclick="kirim('ON')">NYALAKAN</button>
+  <button class="off" onclick="kirim('OFF')">MATIKAN</button>
+
+  <script>
+    const client = mqtt.connect("wss://broker.hivemq.com:8884/mqtt");
+    const topic = "esp32/led";
+
+    client.on("connect", () => {
+      console.log("Terhubung ke HiveMQ");
+    });
+
+    function kirim(pesan) {
+      console.log("Mengirim:", pesan);
+      client.publish(topic, pesan);
+    }
+  </script>
+</body>
+</html>
