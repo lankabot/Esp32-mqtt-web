@@ -5,7 +5,11 @@
   <title>Kontrol LED ESP32 via MQTT</title>
   <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
   <style>
-    body { font-family: Arial; text-align: center; margin-top: 60px; }
+    body {
+      font-family: Arial;
+      text-align: center;
+      margin-top: 60px;
+    }
     h1 { color: #333; }
     button {
       font-size: 18px;
@@ -17,12 +21,25 @@
     }
     .on { background-color: green; color: white; }
     .off { background-color: red; color: white; }
+    .disabled {
+      background-color: gray;
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+    #status {
+      margin-top: 20px;
+      font-size: 20px;
+      color: #444;
+    }
   </style>
 </head>
 <body>
   <h1>Kontrol LED ESP32</h1>
-  <button class="on" onclick="kirim('ON')">NYALAKAN</button>
-  <button class="off" onclick="kirim('OFF')">MATIKAN</button>
+
+  <button id="btnOn" class="on" onclick="kirim('ON')">NYALAKAN</button>
+  <button id="btnOff" class="off disabled" onclick="kirim('OFF')" disabled>MATIKAN</button>
+
+  <p id="status">Status: Tidak diketahui</p>
 
   <script>
     const client = mqtt.connect("wss://broker.hivemq.com:8884/mqtt");
@@ -35,6 +52,24 @@
     function kirim(pesan) {
       console.log("Mengirim:", pesan);
       client.publish(topic, pesan);
+
+      const btnOn = document.getElementById("btnOn");
+      const btnOff = document.getElementById("btnOff");
+      const status = document.getElementById("status");
+
+      if (pesan === "ON") {
+        btnOn.disabled = true;
+        btnOn.classList.add("disabled");
+        btnOff.disabled = false;
+        btnOff.classList.remove("disabled");
+        status.textContent = "Status: LED HIDUP";
+      } else {
+        btnOn.disabled = false;
+        btnOn.classList.remove("disabled");
+        btnOff.disabled = true;
+        btnOff.classList.add("disabled");
+        status.textContent = "Status: LED MATI";
+      }
     }
   </script>
 </body>
